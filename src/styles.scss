@@ -1,2 +1,260 @@
-/* You can add global styles to this file, and also import other style files */
-@use "tailwindcss";
+@use '@angular/material' as mat;
+@use './_theme-colors' as palettes;
+
+// Base layout styles
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  padding: 0;
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: palettes.$primary-palette,
+        tertiary: mat.$red-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+// Layout specific styles
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+mat-toolbar {
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--mat-toolbar-container-background-color);
+  color: var(--mat-toolbar-container-text-color);
+
+  &.dark {
+    background: #1e1e1e;
+    color: rgba(255, 255, 255, 0.87);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+mat-sidenav-container {
+  flex: 1;
+  height: calc(100vh - 64px);
+}
+
+mat-sidenav {
+  width: 280px;
+  padding: 16px;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+
+  .mat-mdc-list-item {
+    height: 48px;
+    padding: 0 16px;
+    margin: 4px 0;
+    border-radius: 4px;
+
+    .mdc-list-item__content {
+      display: flex;
+      align-items: center;
+    }
+
+    mat-icon {
+      margin-right: 16px;
+      opacity: 0.7;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .mat-mdc-nav-list {
+    padding: 0;
+  }
+}
+
+// Navigation styles
+.new-chat-button {
+  padding: 0 16px;
+  margin-bottom: 16px;
+
+  button {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 0 16px;
+
+    mat-icon {
+      margin: 0;
+    }
+  }
+}
+
+.section-title {
+  margin: 16px 0 8px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.7;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+  }
+}
+
+// Chat container styles
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-container {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #fff;
+
+  .message-input {
+    flex: 1;
+    margin: 0;
+
+    ::ng-deep {
+      .mat-mdc-text-field-wrapper {
+        padding: 0;
+      }
+
+      .mat-mdc-form-field-infix {
+        padding: 12px 0;
+        min-height: 48px;
+      }
+
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+  }
+
+  .send-button {
+    margin: 0;
+    height: 48px;
+    width: 48px;
+  }
+}
+
+// Message styles
+.mat-mdc-card {
+  max-width: 70%;
+  margin: 8px 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+
+  &.user-message {
+    margin-left: auto;
+    background: #1a73e8;
+    color: white;
+  }
+
+  &.ai-message {
+    margin-right: auto;
+    background: #f1f3f4;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  .message-timestamp {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+}
+
+// Dark theme
+.dark {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: palettes.$primary-palette,
+        tertiary: mat.$red-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+
+  .input-container {
+    background: #1e1e1e;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .mat-mdc-card {
+    &.user-message {
+      background: #1a73e8;
+    }
+
+    &.ai-message {
+      background: #2d2d2d;
+      color: rgba(255, 255, 255, 0.87);
+    }
+  }
+
+  mat-sidenav {
+    background: #1e1e1e;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .section-title {
+    color: rgba(255, 255, 255, 0.7);
+    
+    mat-icon {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  .mat-mdc-list-item {
+    color: rgba(255, 255, 255, 0.87);
+    
+    mat-icon {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+  }
+}
+
+// Utility classes
+.spacer {
+  flex: 1 1 auto;
+}

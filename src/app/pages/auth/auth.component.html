@@ -1,0 +1,101 @@
+<div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <h2 class="text-center text-3xl font-extrabold text-gray-900">
+      Welcome Back
+    </h2>
+  </div>
+
+  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
+        <!-- Login Tab -->
+        <mat-tab label="Login">
+          <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-6 mt-6">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" type="email" required>
+              <mat-icon matPrefix class="mr-2">email</mat-icon>
+              <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+                Please enter a valid email
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Password</mat-label>
+              <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" required>
+              <mat-icon matPrefix class="mr-2">lock</mat-icon>
+              <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                Password is required
+              </mat-error>
+            </mat-form-field>
+
+            <div>
+              <button mat-raised-button color="primary" class="w-full" type="submit" [disabled]="loginForm.invalid">
+                Sign in
+              </button>
+            </div>
+          </form>
+        </mat-tab>
+
+        <!-- Sign Up Tab -->
+        <mat-tab label="Sign Up">
+          <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="space-y-6 mt-6">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" type="email" required>
+              <mat-icon matPrefix class="mr-2">email</mat-icon>
+              <mat-error *ngIf="signupForm.get('email')?.hasError('required')">
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="signupForm.get('email')?.hasError('email')">
+                Please enter a valid email
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Password</mat-label>
+              <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" required>
+              <mat-icon matPrefix class="mr-2">lock</mat-icon>
+              <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="signupForm.get('password')?.hasError('required')">
+                Password is required
+              </mat-error>
+              <mat-error *ngIf="signupForm.get('password')?.hasError('minlength')">
+                Password must be at least 8 characters
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Confirm Password</mat-label>
+              <input matInput formControlName="confirmPassword" [type]="hidePassword ? 'password' : 'text'" required>
+              <mat-icon matPrefix class="mr-2">lock</mat-icon>
+              <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('required')">
+                Confirm password is required
+              </mat-error>
+              <mat-error *ngIf="signupForm.hasError('passwordMismatch')">
+                Passwords do not match
+              </mat-error>
+            </mat-form-field>
+
+            <div>
+              <button mat-raised-button color="primary" class="w-full" type="submit" [disabled]="signupForm.invalid">
+                Create Account
+              </button>
+            </div>
+          </form>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</div> 
