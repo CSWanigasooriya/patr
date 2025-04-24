@@ -67,6 +67,8 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit(): void {
     this.connectWebSocket();
+    const greeting = "👋 Hello! I'm your travel assistant. I can help you plan your perfect trip, suggest destinations, find accommodations, or answer any travel-related questions. How can I assist you today?";
+    this.addMessage(greeting, false);
   }
 
   ngOnDestroy(): void {
@@ -164,6 +166,8 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.socket?.readyState !== WebSocket.OPEN) {
       this.connectWebSocket();
     }
+    const greeting = "👋 Hello! I'm your travel assistant. I can help you plan your perfect trip, suggest destinations, find accommodations, or answer any travel-related questions. How can I assist you today?";
+    this.addMessage(greeting, false);
   }
 
   loadChat(chat: string): void {
