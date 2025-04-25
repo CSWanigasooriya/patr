@@ -51,10 +51,6 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
   private socket: WebSocket | null = null;
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
-  private reconnectDelay = 2000; // 2 seconds
-  private reconnectTimeoutId: any;
   isAuthenticated$: Observable<boolean>;
   isDarkTheme = false;
   messageInput = new FormControl('');
@@ -79,10 +75,7 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnDestroy(): void {
-    if (this.reconnectTimeoutId) {
-      clearTimeout(this.reconnectTimeoutId);
-    }
-    this.closeWebSocket();
+    this.disconnectWebSocket();
   }
 
   ngAfterViewChecked() {
@@ -90,75 +83,40 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private connectWebSocket(): void {
-    if (this.socket?.readyState === WebSocket.OPEN) {
-      return; // Already connected
-    }
+    this.socket = new WebSocket('wss://p61j4q70xi.execute-api.us-east-1.amazonaws.com/production/');
 
-    try {
-      this.socket = new WebSocket('wss://p61j4q70xi.execute-api.us-east-1.amazonaws.com/production/');
+    this.socket.onopen = () => {
+      this.isConnected = true;
+    };
 
-      this.socket.onopen = () => {
-        console.log('WebSocket connected');
-        this.isConnected = true;
-        this.reconnectAttempts = 0;
-      };
-
-      this.socket.onmessage = (event) => {
-        this.isThinking = false;
-        try {
-          const data = JSON.parse(event.data);
-          if (data.response) {
-            this.addMessage(data.response, false);
-          } else {
-            this.addMessage(event.data, false);
-          }
-        } catch {
+    this.socket.onmessage = (event) => {
+      this.isThinking = false;
+      
+      try {
+        const data = JSON.parse(event.data);
+        if (data.response) {
+          this.addMessage(data.response, false);
+        } else {
           this.addMessage(event.data, false);
         }
-      };
+      } catch {
+        this.addMessage(event.data, false);
+      }
+    };
 
-      this.socket.onclose = () => {
-        console.log('WebSocket closed');
-        this.isConnected = false;
-        this.attemptReconnect();
-      };
-
-      this.socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        this.isConnected = false;
-        this.socket?.close();
-      };
-
-    } catch (error) {
-      console.error('Error creating WebSocket:', error);
+    this.socket.onclose = () => {
       this.isConnected = false;
-      this.attemptReconnect();
-    }
+    };
+
+    this.socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
   }
 
-  private closeWebSocket(): void {
+  private disconnectWebSocket(): void {
     if (this.socket) {
       this.socket.close();
       this.socket = null;
-      this.isConnected = false;
-    }
-  }
-
-  private attemptReconnect(): void {
-    if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      console.log(`Attempting to reconnect (${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})...`);
-
-      if (this.reconnectTimeoutId) {
-        clearTimeout(this.reconnectTimeoutId);
-      }
-
-      this.reconnectTimeoutId = setTimeout(() => {
-        this.reconnectAttempts++;
-        this.connectWebSocket();
-      }, this.reconnectDelay);
-    } else {
-      console.error('Max reconnection attempts reached');
-      this.addMessage('Connection lost. Please refresh the page.', false);
     }
   }
 
@@ -198,52 +156,18 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   async sendMessage(): Promise<void> {
     const message = this.messageInput.value?.trim();
-    if (!message) return;
-
-    try {
-      if (!this.isConnected || this.socket?.readyState !== WebSocket.OPEN) {
-        await this.ensureConnection();
-      }
-
-      if (this.socket?.readyState === WebSocket.OPEN) {
-        this.addMessage(message, true);
-        this.isThinking = true;
-
+    if (message && this.socket?.readyState === WebSocket.OPEN) {
+      this.addMessage(message, true);
+      
+      this.isThinking = true;
+      
+      try {
         this.socket.send(message);
         this.messageInput.reset();
-      } else {
-        throw new Error('WebSocket is not connected');
+      } catch (error) {
+        console.error('Error sending message:', error);
       }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      this.addMessage('Failed to send message. Reconnecting...', false);
-      this.connectWebSocket();
     }
-  }
-
-  private async ensureConnection(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      if (this.socket?.readyState === WebSocket.OPEN) {
-        resolve();
-        return;
-      }
-
-      this.connectWebSocket();
-
-      let connectionAttempts = 0;
-      const maxAttempts = 3;
-      const checkInterval = setInterval(() => {
-        connectionAttempts++;
-
-        if (this.socket?.readyState === WebSocket.OPEN) {
-          clearInterval(checkInterval);
-          resolve();
-        } else if (connectionAttempts >= maxAttempts) {
-          clearInterval(checkInterval);
-          reject(new Error('Failed to establish connection'));
-        }
-      }, 1000);
-    });
   }
 
   async startNewChat(): Promise<void> {
@@ -261,7 +185,7 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   logout(): void {
-    this.closeWebSocket();
+    this.disconnectWebSocket();
     this.authService.signOut()
       .then(() => {
         this.router.navigate(['/auth']);
