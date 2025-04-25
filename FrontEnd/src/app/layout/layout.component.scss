@@ -48,11 +48,11 @@ mat-sidenav-content {
   height: 100%;
   position: relative;
   background-color: #f5f5f5;
-  
+
   .dark-theme & {
     background-color: #121212;
   }
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -82,11 +82,11 @@ mat-sidenav-content {
     max-width: 70%;
     border-radius: 16px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    
+
     &.user-message {
       margin-left: auto;
       background-color: #6a0dad;
-      
+
       mat-card-content {
         color: rgba(255, 255, 255, 0.87);
 
@@ -95,21 +95,21 @@ mat-sidenav-content {
         }
       }
     }
-    
+
     &.ai-message {
       margin-right: auto;
       background-color: #ffffff;
       border: 1px solid rgba(0, 0, 0, 0.12);
-      
+
       .dark-theme & {
         background-color: #1e1e1e;
         border-color: rgba(255, 255, 255, 0.12);
-        
+
         mat-card-content {
           color: rgba(255, 255, 255, 0.87);
         }
       }
-      
+
       mat-card-content {
         color: rgba(0, 0, 0, 0.87);
       }
@@ -117,7 +117,7 @@ mat-sidenav-content {
 
     mat-card-content {
       padding: 12px 16px;
-      
+
       p {
         margin: 0;
         white-space: pre-line;
@@ -135,6 +135,10 @@ mat-sidenav-content {
     .dark-theme & {
       color: rgba(255, 255, 255, 0.54);
     }
+  }
+
+  app-thinking-bubble {
+    margin-left: 16px;  // Add some margin to align with other messages
   }
 }
 
@@ -202,7 +206,7 @@ mat-sidenav-content {
     align-items: center;
     justify-content: center;
     transition: transform 0.2s ease;
-    
+
     &:hover {
       transform: scale(1.05);
     }
@@ -232,7 +236,7 @@ mat-list {
     gap: 12px;
     cursor: pointer;
     color: rgba(0, 0, 0, 0.87);
-    
+
     mat-icon {
       margin-right: 8px;
       color: #6a0dad;
@@ -282,7 +286,7 @@ mat-list {
 .mat-mdc-nav-list {
   .mat-mdc-list-item {
     color: rgba(0, 0, 0, 0.87);
-    
+
     .dark-theme & {
       color: rgba(255, 255, 255, 0.87);
     }
@@ -303,7 +307,7 @@ mat-list {
 .section-header {
   .dark-theme & {
     color: rgba(255, 255, 255, 0.6);
-    
+
     mat-icon {
       color: rgba(255, 255, 255, 0.87);
     }
@@ -314,7 +318,7 @@ mat-list {
 .mat-mdc-list-item {
   color: rgba(0, 0, 0, 0.87);
   height: 48px !important;
-  
+
   .dark-theme & {
     color: rgba(255, 255, 255, 0.87);
     background-color: transparent;
@@ -387,12 +391,12 @@ mat-list {
 // Ensure proper styling for the new chat button section
 .new-chat-button {
   padding: 16px;
-  
+
   button {
     width: 100%;
     background-color: #6a0dad;
     color: white;
-    
+
     .dark-theme & {
       background-color: #9747d4 !important;
       color: rgba(255, 255, 255, 0.87);
@@ -417,12 +421,77 @@ mat-list {
   mat-sidenav {
     background-color: #1e1e1e !important;
   }
-  
+
   .mat-drawer-container {
     background-color: #1e1e1e !important;
   }
-  
+
   .mat-drawer {
     background-color: #1e1e1e !important;
   }
 }
+
+.logo-container {
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .travel-logo {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .dark-theme & {
+    .travel-logo {
+      filter: brightness(0.9);
+    }
+  }
+}
+
+.mascot-section {
+  padding: 24px 16px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;  // Space between text and mascot
+
+  .genie-text {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .text-image {
+      width: 80%;  // Slightly smaller than the mascot
+      max-width: 180px;
+      height: auto;
+      object-fit: contain;
+    }
+  }
+
+  .mascot-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .mascot-image {
+      width: 100%;
+      max-width: 220px;
+      height: auto;
+      object-fit: contain;
+    }
+  }
+
+  .dark-theme & {
+    .text-image,
+    .mascot-image {
+      filter: brightness(0.9);
+    }
+  }
+}
+
+

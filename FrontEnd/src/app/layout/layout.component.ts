@@ -16,6 +16,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { ThinkingBubbleComponent } from '../shared/components/thinking-bubble/thinking-bubble.component';
 
 interface ChatMessage {
   content: string;
@@ -40,14 +41,15 @@ interface ChatMessage {
     MatFormFieldModule,
     MatInputModule,
     MatCardModule,
-    MatRippleModule
+    MatRippleModule,
+    ThinkingBubbleComponent
   ],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
-  
+
   private socket: WebSocket | null = null;
   isAuthenticated$: Observable<boolean>;
   isDarkTheme = false;
@@ -56,6 +58,7 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
   recentChats: string[] = ['Summer Vacation', 'Weekend Getaway', 'Business Trip'];
   messages: ChatMessage[] = [];
   isConnected = false;
+  isThinking = false;
 
   constructor(
     private authService: AuthService,
@@ -81,12 +84,14 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   private connectWebSocket(): void {
     this.socket = new WebSocket('wss://p61j4q70xi.execute-api.us-east-1.amazonaws.com/production/');
-    
+
     this.socket.onopen = () => {
       this.isConnected = true;
     };
 
     this.socket.onmessage = (event) => {
+      this.isThinking = false;
+      
       try {
         const data = JSON.parse(event.data);
         if (data.response) {
@@ -152,12 +157,16 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewChecked {
   async sendMessage(): Promise<void> {
     const message = this.messageInput.value?.trim();
     if (message && this.socket?.readyState === WebSocket.OPEN) {
-      // Add user message
       this.addMessage(message, true);
       
-      // Send via WebSocket
-      this.socket.send(message);
-      this.messageInput.reset();
+      this.isThinking = true;
+      
+      try {
+        this.socket.send(message);
+        this.messageInput.reset();
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
     }
   }
 
